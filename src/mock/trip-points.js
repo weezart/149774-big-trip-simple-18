@@ -1,5 +1,5 @@
-import {OFFER_TYPES, DATE} from './data';
-import {getRandomArrayItem, getRandomInteger} from '../utils';
+import {OFFER_TYPES, DATE} from './data.js';
+import {getRandomArrayItem, getRandomInteger} from '../utils.js';
 
 import dayjs from 'dayjs';
 

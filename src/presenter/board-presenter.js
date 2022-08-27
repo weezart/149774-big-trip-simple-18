@@ -9,8 +9,17 @@ export default class BoardPresenter {
   eventListComponent = new EventListView();
   eventAddComponent = new EventAddView();
 
-  init = (boardContainer) => {
+  init = (boardContainer, offersModel, destinationsModel, tripPointsModel) => {
     this.boardContainer = boardContainer;
+    this.offersModel = offersModel;
+    this.destinationsModel = destinationsModel;
+    this.tripPointsModel = tripPointsModel;
+
+    this.offers = [...this.offersModel.getOffers()];
+    this.offerTypes = [...this.offersModel.getOfferTypes()];
+    this.destinations = [...this.destinationsModel.getDestinations()];
+    this.tripPoints = [...this.tripPointsModel.getTripPoints()];
+
     render(new SortView(), this.boardContainer);
     render(this.eventListComponent, this.boardContainer);
     render(new EventEditView(), this.eventListComponent.getElement());
@@ -19,8 +28,8 @@ export default class BoardPresenter {
     render(this.eventAddComponent, this.eventListComponent.getElement());
     this.eventAddComponent.getElement().remove();
 
-    for (let i = 0; i < 3; i++) {
-      render(new EventView(), this.eventListComponent.getElement());
+    for (let i = 0; i < this.tripPoints.length; i++) {
+      render(new EventView(this.tripPoints[i]), this.eventListComponent.getElement());
     }
   };
 }

@@ -1,5 +1,5 @@
-import {OFFERS, OFFER_TYPES} from './data';
-import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils';
+import {OFFERS, OFFER_TYPES} from './data.js';
+import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils.js';
 
 
 let counterOffers = 0;

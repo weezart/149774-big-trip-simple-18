@@ -1,4 +1,4 @@
-import {generateOffer, generateOfferType} from '../mock/offers';
+import {generateOffer, generateOfferType} from '../mock/offers.js';
 
 export default class OffersModel {
   offers = Array.from({length: 10}, generateOffer);
