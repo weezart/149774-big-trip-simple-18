@@ -3,7 +3,6 @@ import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '.
 
 
 let counterOffers = 0;
-let offerId = 0;
 
 export const generateOffer = () => ({
   id:  counterOffers++,
@@ -11,7 +10,8 @@ export const generateOffer = () => ({
   price: getRandomInteger(100, 1000)
 });
 
-const getIntegerArray = Array.from({length: 100}, () => offerId++);
+let offerId = 0;
+export const getIntegerArray = Array.from({length: 10}, () => offerId++);
 
 export const generateOfferType = () => ({
   type:  getRandomArrayItem(OFFER_TYPES),

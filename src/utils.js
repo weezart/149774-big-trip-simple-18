@@ -18,17 +18,12 @@ export const getRandomArrayItem = (array) => {
 // Массив заданной длины случайных элементов.
 export const getRandomizedReducedArray = (array, count) => array.slice().sort(() => Math.random() - 0.5).slice(0, count);
 
-export const getDuration = (minutes) => {
-  const hours = minutes / 60;
-  if (hours < 1) {
-    return `${minutes}m`;
-  } else if ((minutes % 60) === 0) {
-    return `${hours.toFixed(0)}h`;
-  }
-  return `${hours.toFixed(0)}h ${minutes % 60}m` ;
-};
-
-export const humanizeDate = (date) => dayjs(date).format('YYYY/MM/DD HH:MM');
+export const humanizeDateToTimeDate = (data) => dayjs(data).format('YYYY-MM-DD[T]HH:mm');
+export const humanizeDateToTimeDateMini = (data) => dayjs(data).format('YYYY-MM-DD');
+export const humanizeDate = (date) => dayjs(date).format('DD MMMM YYYY');
+export const humanizeDateToTime = (date) => dayjs(date).format('HH:mm');
+export const humanizeDateToDayMonth = (data) => dayjs(data).format('MMM DD');
+export const humanizeDateToYear = (date) => dayjs(date).format('YYYY');
 
 export const getRandomDay = (rangeType, min, max) => {
   const daysGap = getRandomInteger(max, min);

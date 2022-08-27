@@ -27,9 +27,10 @@ export default class BoardPresenter {
     // Временные функции для проверки работы формы создания
     render(this.eventAddComponent, this.eventListComponent.getElement());
     this.eventAddComponent.getElement().remove();
-
     for (let i = 0; i < this.tripPoints.length; i++) {
-      render(new EventView(this.tripPoints[i]), this.eventListComponent.getElement());
+      const tripDestination = this.destinations.find((destination) => destination.id === this.tripPoints[i].destination);
+      const tripOffers = this.offers.filter(({id}) => this.tripPoints[i].offers.some((offerId) => offerId === id));
+      render(new EventView(this.tripPoints[i], tripDestination, tripOffers), this.eventListComponent.getElement());
     }
   };
 }

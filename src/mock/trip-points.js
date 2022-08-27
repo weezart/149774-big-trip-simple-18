@@ -1,7 +1,9 @@
 import {OFFER_TYPES, DATE} from './data.js';
-import {getRandomArrayItem, getRandomInteger} from '../utils.js';
+import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils.js';
+import {getIntegerArray} from './offers.js';
 
 import dayjs from 'dayjs';
+
 
 const generateDate = () => {
   const dateFrom = dayjs(DATE).add(getRandomInteger(0, 5), 'd').add(getRandomInteger(0, 5), 'h').add(getRandomInteger(0, 59), 'm');
@@ -16,9 +18,9 @@ export const generateTripPoint = () => {
     basePrice: getRandomInteger(100, 2000),
     dateFrom: date.dateFrom,
     dateTo: date.dateTo,
-    destination: getRandomInteger(0, 10),
-    id: getRandomInteger(0, 10),
-    offers: getRandomInteger(0, 10),
+    destination: getRandomInteger(0, 9),
+    id: getRandomInteger(0, 9),
+    offers: getRandomizedReducedArray(getIntegerArray, getRandomInteger(0, 3)),
     type: getRandomArrayItem(OFFER_TYPES),
   };
 };
