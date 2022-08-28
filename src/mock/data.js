@@ -28,7 +28,7 @@ export const OFFER_INPUTS = {
   'Add breakfast': 'breakfast',
   'Book tickets': 'tickets',
   'Lunch in city': 'city'
-}
+};
 
 export const DESTINATIONS = [
   'Chamonix',
