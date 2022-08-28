@@ -13,7 +13,9 @@ export const generateOffer = () => ({
 let offerId = 0;
 export const getIntegerArray = Array.from({length: 10}, () => offerId++);
 
+let counterOfferTypes = 0;
+
 export const generateOfferType = () => ({
-  type:  getRandomArrayItem(OFFER_TYPES),
-  offers: getRandomizedReducedArray(getIntegerArray, getRandomInteger(0, 3))
+  type:  OFFER_TYPES[counterOfferTypes++],
+  offers: getRandomizedReducedArray(getIntegerArray, getRandomInteger(1, 5))
 });

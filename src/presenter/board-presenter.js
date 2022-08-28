@@ -22,12 +22,17 @@ export default class BoardPresenter {
 
     render(new SortView(), this.boardContainer);
     render(this.eventListComponent, this.boardContainer);
-    render(new EventEditView(), this.eventListComponent.getElement());
+
+    const editTripDestination = this.destinations.find((destination) => destination.id === this.tripPoints[0].destination);
+    const editTripOffers = this.offers.filter(({id}) => this.tripPoints[0].offers.some((offerId) => offerId === id));
+    const editTripOfferTypesId = this.offerTypes.find((offerType) => offerType.type === this.tripPoints[0].type);
+    const editTripAvailableOffers = this.offers.filter(({id}) => editTripOfferTypesId.offers.some((offerId) => offerId === id));
+    render(new EventEditView(this.tripPoints[0], editTripDestination, editTripOffers, editTripAvailableOffers), this.eventListComponent.getElement());
 
     // Временные функции для проверки работы формы создания
     render(this.eventAddComponent, this.eventListComponent.getElement());
     this.eventAddComponent.getElement().remove();
-    for (let i = 0; i < this.tripPoints.length; i++) {
+    for (let i = 1; i < this.tripPoints.length; i++) {
       const tripDestination = this.destinations.find((destination) => destination.id === this.tripPoints[i].destination);
       const tripOffers = this.offers.filter(({id}) => this.tripPoints[i].offers.some((offerId) => offerId === id));
       render(new EventView(this.tripPoints[i], tripDestination, tripOffers), this.eventListComponent.getElement());

@@ -8,9 +8,10 @@ const generatePicture = () => ({
 
 let counterDestination = 0;
 
+
 export const generateDestination = () => ({
   id:  counterDestination++,
-  description: getRandomizedReducedArray(DESCRIPTIONS, getRandomInteger(1, 5)),
+  description: getRandomizedReducedArray(DESCRIPTIONS, getRandomInteger(1, 5)).join(),
   name: getRandomArrayItem(DESTINATIONS),
   pictures: Array.from({length: getRandomInteger(0, 4)}, generatePicture)
 });

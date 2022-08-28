@@ -20,6 +20,16 @@ export const OFFERS = [
   'Lunch in city'
 ];
 
+export const OFFER_INPUTS = {
+  'Add luggage': 'luggage',
+  'Order Uber': 'uber',
+  'Rent a car': 'car',
+  'Switch to comfort': 'comfort',
+  'Add breakfast': 'breakfast',
+  'Book tickets': 'tickets',
+  'Lunch in city': 'city'
+}
+
 export const DESTINATIONS = [
   'Chamonix',
   'Amsterdam',

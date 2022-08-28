@@ -20,13 +20,17 @@ export const getRandomizedReducedArray = (array, count) => array.slice().sort(()
 
 export const humanizeDateToTimeDate = (data) => dayjs(data).format('YYYY-MM-DD[T]HH:mm');
 export const humanizeDateToTimeDateMini = (data) => dayjs(data).format('YYYY-MM-DD');
-export const humanizeDate = (date) => dayjs(date).format('DD MMMM YYYY');
+export const humanizeDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 export const humanizeDateToTime = (date) => dayjs(date).format('HH:mm');
 export const humanizeDateToDayMonth = (data) => dayjs(data).format('MMM DD');
 export const humanizeDateToYear = (date) => dayjs(date).format('YYYY');
 
-export const getRandomDay = (rangeType, min, max) => {
-  const daysGap = getRandomInteger(max, min);
+export const ucFirst = (str) => {
+  if (!str) {
+    return str;
+  }
 
-  return dayjs().add(daysGap, rangeType).toDate();
+  return str[0].toUpperCase() + str.slice(1);
 };
+
+
