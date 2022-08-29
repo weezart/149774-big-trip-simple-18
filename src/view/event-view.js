@@ -56,15 +56,19 @@ const createEventTemplate = (point, destination, offers) => (
 );
 
 export default class EventView extends View {
+  #point = null;
+  #destination = null;
+  #offers = null;
+
   constructor(point, destination, offers) {
     super();
 
-    this.point = point;
-    this.destination = destination;
-    this.offers = offers;
+    this.#point = point;
+    this.#destination = destination;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createEventTemplate(this.point, this.destination, this.offers);
+  get template() {
+    return createEventTemplate(this.#point, this.#destination, this.#offers);
   }
 }
