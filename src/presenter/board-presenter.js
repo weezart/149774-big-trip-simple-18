@@ -4,8 +4,7 @@ import EventEditView from '../view/event-edit-view.js';
 import EventAddView from '../view/event-add-view.js';
 import EventView from '../view/event-view.js';
 import {render} from '../render.js';
-import {getRandomInteger, getRandomizedReducedArray} from "../utils";
-import {getIntegerArray} from "../mock/offers";
+import {getRandomInteger, getRandomizedReducedArray} from '../utils';
 
 export default class BoardPresenter {
   #boardContainer = null;
