@@ -6,7 +6,7 @@ const createEventListTemplate = () => (
 );
 
 export default class EventListView extends View {
-  getTemplate() {
+  get template() {
     return createEventListTemplate();
   }
 }

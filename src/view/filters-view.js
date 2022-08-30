@@ -17,7 +17,7 @@ const createFiltersTemplate = () => (
 );
 
 export default class FiltersView extends View {
-  getTemplate() {
+  get template() {
     return createFiltersTemplate();
   }
 }

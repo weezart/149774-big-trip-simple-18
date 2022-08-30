@@ -166,7 +166,7 @@ const createEventAddTemplate = () => (
 );
 
 export default class EventAddView extends View {
-  getTemplate() {
+  get template() {
     return createEventAddTemplate();
   }
 }

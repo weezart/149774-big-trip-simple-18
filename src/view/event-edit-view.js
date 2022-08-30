@@ -102,16 +102,21 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
 };
 
 export default class EventEditView extends View {
+  #point = null;
+  #destination = null;
+  #offers = null;
+  #availableOffers = null;
+
   constructor(point, destination, offers, availableOffers) {
     super();
 
-    this.point = point;
-    this.destination = destination;
-    this.offers = offers;
-    this.availableOffers = availableOffers;
+    this.#point = point;
+    this.#destination = destination;
+    this.#offers = offers;
+    this.#availableOffers = availableOffers;
   }
 
-  getTemplate() {
-    return createEventEditTemplate(this.point, this.destination, this.offers, this.availableOffers);
+  get template() {
+    return createEventEditTemplate(this.#point, this.#destination, this.#offers, this.#availableOffers);
   }
 }
