@@ -1,4 +1,4 @@
-import View from './view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   humanizeDateToTime,
   humanizeDateToTimeDate,
@@ -55,7 +55,7 @@ const createEventTemplate = (point, destination, offers) => (
   </li>`
 );
 
-export default class EventView extends View {
+export default class EventView extends AbstractView {
   #point = null;
   #destination = null;
   #offers = null;

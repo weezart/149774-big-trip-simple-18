@@ -1,4 +1,4 @@
-import View from './view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createNoEventsTemplate = () => (
   `<p class="trip-events__msg">
@@ -6,7 +6,7 @@ const createNoEventsTemplate = () => (
   </p>`
 );
 
-export default class NoEventsView extends View {
+export default class NoEventsView extends AbstractView {
   get template() {
     return createNoEventsTemplate();
   }

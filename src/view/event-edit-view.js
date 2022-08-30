@@ -1,4 +1,4 @@
-import View from './view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../mock/data.js';
 import {ucFirst, humanizeDate} from '../utils.js';
 
@@ -101,7 +101,7 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
   );
 };
 
-export default class EventEditView extends View {
+export default class EventEditView extends AbstractView {
   #point = null;
   #destination = null;
   #offers = null;
