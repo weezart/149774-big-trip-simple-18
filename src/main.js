@@ -11,7 +11,7 @@ const filtersElement = document.querySelector('.trip-controls__filters');
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const tripPointsModel = new TripPointsModel();
-const boardPresenter = new BoardPresenter();
+const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, tripPointsModel);
 
 render(new FiltersView(), filtersElement);
-boardPresenter.init(siteMainElement, offersModel, destinationsModel, tripPointsModel);
+boardPresenter.init();

@@ -3,6 +3,7 @@ import EventListView from '../view/event-list-view.js';
 import EventEditView from '../view/event-edit-view.js';
 import EventAddView from '../view/event-add-view.js';
 import EventView from '../view/event-view.js';
+import NoEventsView from '../view/no-events-view';
 import {render} from '../render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils';
 
@@ -20,26 +21,36 @@ export default class BoardPresenter {
   #destinations = [];
   #tripPoints = [];
 
-  init = (boardContainer, offersModel, destinationsModel, tripPointsModel) => {
+  constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
     this.#boardContainer = boardContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#tripPointsModel = tripPointsModel;
+  }
 
+  init = () => {
     this.#offers = [...this.#offersModel.offers];
     this.#offerTypes = [...this.#offersModel.offerTypes];
     this.#destinations = [...this.#destinationsModel.destinations];
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
 
-    render(new SortView(), this.#boardContainer);
-    render(this.#eventListComponent, this.#boardContainer);
+    this.#renderBoard();
+  };
 
-    // Временные функции для проверки работы формы создания
-    render(this.#eventAddComponent, this.#eventListComponent.element);
-    this.#eventAddComponent.element.remove();
+  #renderBoard = () => {
+    if (this.#tripPoints.length > 0) {
+      render(new SortView(), this.#boardContainer);
+      render(this.#eventListComponent, this.#boardContainer);
 
-    for (let i = 0; i < this.#tripPoints.length; i++) {
-      this.#renderEvent(this.#tripPoints[i]);
+      for (let i = 0; i < this.#tripPoints.length; i++) {
+        this.#renderEvent(this.#tripPoints[i]);
+      }
+
+      // Временные функции для проверки работы формы создания
+      render(this.#eventAddComponent, this.#eventListComponent.element);
+      this.#eventAddComponent.element.remove();
+    } else {
+      render(new NoEventsView(), this.#boardContainer);
     }
   };
 
