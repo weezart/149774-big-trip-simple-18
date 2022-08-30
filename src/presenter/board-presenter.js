@@ -4,6 +4,8 @@ import EventEditView from '../view/event-edit-view.js';
 import EventAddView from '../view/event-add-view.js';
 import EventView from '../view/event-view.js';
 import {render} from '../render.js';
+import {getRandomInteger, getRandomizedReducedArray} from "../utils";
+import {getIntegerArray} from "../mock/offers";
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -11,8 +13,8 @@ export default class BoardPresenter {
   #destinationsModel = null;
   #tripPointsModel = null;
 
-  eventListComponent = new EventListView();
-  eventAddComponent = new EventAddView();
+  #eventListComponent = new EventListView();
+  #eventAddComponent = new EventAddView();
 
   #offers = [];
   #offerTypes = [];
@@ -31,27 +33,47 @@ export default class BoardPresenter {
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
 
     render(new SortView(), this.#boardContainer);
-    render(this.eventListComponent, this.#boardContainer);
-
-    // const editTripDestination = this.#destinations.find((destination) => destination.id === this.#tripPoints[0].destination);
-    // const editTripOffers = this.#offers.filter(({id}) => this.#tripPoints[0].offers.some((offerId) => offerId === id));
-    // const editTripOfferTypesId = this.#offerTypes.find((offerType) => offerType.type === this.#tripPoints[0].type);
-    // const editTripAvailableOffers = this.#offers.filter(({id}) => editTripOfferTypesId.offers.some((offerId) => offerId === id));
-    // render(new EventEditView(this.#tripPoints[0], editTripDestination, editTripOffers, editTripAvailableOffers), this.eventListComponent.element);
+    render(this.#eventListComponent, this.#boardContainer);
 
     // Временные функции для проверки работы формы создания
-    render(this.eventAddComponent, this.eventListComponent.element);
-    this.eventAddComponent.element.remove();
+    render(this.#eventAddComponent, this.#eventListComponent.element);
+    this.#eventAddComponent.element.remove();
+
     for (let i = 0; i < this.#tripPoints.length; i++) {
       this.#renderEvent(this.#tripPoints[i]);
     }
   };
 
   #renderEvent = (point) => {
+    const offerTypesId = this.#offerTypes.find((offerType) => offerType.type === point.type);
+
+    // Костыль, проставляющий случайные id из массива только возможных офферов
+    point.offers = getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3));
+
     const destination = this.#destinations.find((destinationsItem) => destinationsItem.id === point.destination);
     const offers = this.#offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
-    const eventComponent = new EventView(point, destination, offers);
+    const availableOffers = this.#offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
 
-    render(eventComponent, this.eventListComponent.element);
+    const eventComponent = new EventView(point, destination, offers);
+    const eventEditComponent = new EventEditView(point, destination, offers, availableOffers);
+
+    const replaceCardToForm = () => {
+      this.#eventListComponent.element.replaceChild(eventEditComponent.element, eventComponent.element);
+    };
+
+    const replaceFormToCard = () => {
+      this.#eventListComponent.element.replaceChild(eventComponent.element, eventEditComponent.element);
+    };
+
+    eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceCardToForm();
+    });
+
+    eventEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+    });
+
+    render(eventComponent, this.#eventListComponent.element);
   };
 }
