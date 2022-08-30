@@ -1,5 +1,5 @@
 import FiltersView from './view/filters-view.js';
-import {render} from './render.js';
+import {render} from './framework/render.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import OffersModel from './model/offers-model.js';
 import DestinationsModel from './model/destinations-model.js';
