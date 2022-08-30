@@ -21,17 +21,23 @@ export default class BoardPresenter {
   #destinations = [];
   #tripPoints = [];
 
-  init = (boardContainer, offersModel, destinationsModel, tripPointsModel) => {
+  constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
     this.#boardContainer = boardContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#tripPointsModel = tripPointsModel;
+  }
 
+  init = () => {
     this.#offers = [...this.#offersModel.offers];
     this.#offerTypes = [...this.#offersModel.offerTypes];
     this.#destinations = [...this.#destinationsModel.destinations];
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
 
+    this.#renderBoard();
+  };
+
+  #renderBoard = () => {
     if (this.#tripPoints.length > 0) {
       render(new SortView(), this.#boardContainer);
       render(this.#eventListComponent, this.#boardContainer);
