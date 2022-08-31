@@ -4,7 +4,7 @@ import {
   humanizeDateToTimeDate,
   humanizeDateToTimeDateMini,
   humanizeDateToDayMonth
-} from '../utils.js';
+} from '../utils/event.js';
 
 const createOffers = (offers) => {
   if (offers.length === 0) {

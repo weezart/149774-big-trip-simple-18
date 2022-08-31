@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 export const getRandomInteger = (a = 0, b = 1) => {
@@ -18,13 +16,6 @@ export const getRandomArrayItem = (array) => {
 // Массив заданной длины случайных элементов.
 export const getRandomizedReducedArray = (array, count) => array.slice().sort(() => Math.random() - 0.5).slice(0, count);
 
-export const humanizeDateToTimeDate = (data) => dayjs(data).format('YYYY-MM-DD[T]HH:mm');
-export const humanizeDateToTimeDateMini = (data) => dayjs(data).format('YYYY-MM-DD');
-export const humanizeDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
-export const humanizeDateToTime = (date) => dayjs(date).format('HH:mm');
-export const humanizeDateToDayMonth = (data) => dayjs(data).format('MMM DD');
-export const humanizeDateToYear = (date) => dayjs(date).format('YYYY');
-
 export const ucFirst = (str) => {
   if (!str) {
     return str;
@@ -32,5 +23,3 @@ export const ucFirst = (str) => {
 
   return str[0].toUpperCase() + str.slice(1);
 };
-
-

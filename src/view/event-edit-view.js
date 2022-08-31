@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../mock/data.js';
-import {ucFirst, humanizeDate} from '../utils.js';
+import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../data.js';
+import {ucFirst} from '../utils/common.js';
+import {humanizeDate} from '../utils/event.js';
 
 const createEventEditTemplate = (point, destination, offers, availableOffers) => {
   const offersId = new Set();

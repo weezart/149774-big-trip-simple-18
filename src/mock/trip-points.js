@@ -1,9 +1,8 @@
-import {OFFER_TYPES, DATE} from './data.js';
-import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils.js';
+import {OFFER_TYPES, DATE} from '../data.js';
+import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import {getIntegerArray} from './offers.js';
 
 import dayjs from 'dayjs';
-
 
 const generateDate = () => {
   const dateFrom = dayjs(DATE).add(getRandomInteger(0, 5), 'd').add(getRandomInteger(0, 5), 'h').add(getRandomInteger(0, 59), 'm');

@@ -1,5 +1,5 @@
-import {getRandomInteger, getRandomizedReducedArray, getRandomArrayItem} from '../utils.js';
-import {DESCRIPTIONS, DESTINATIONS, PHOTO_URL} from './data.js';
+import {getRandomInteger, getRandomizedReducedArray, getRandomArrayItem} from '../utils/common.js';
+import {DESCRIPTIONS, DESTINATIONS, PHOTO_URL} from '../data.js';
 
 const generatePicture = () => ({
   src: `${PHOTO_URL + getRandomInteger(1, 500)}`,
