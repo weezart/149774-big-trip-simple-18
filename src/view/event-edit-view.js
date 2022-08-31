@@ -1,6 +1,7 @@
-import View from './view.js';
-import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../mock/data.js';
-import {ucFirst, humanizeDate} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../data.js';
+import {ucFirst} from '../utils/common.js';
+import {humanizeDate} from '../utils/event.js';
 
 const createEventEditTemplate = (point, destination, offers, availableOffers) => {
   const offersId = new Set();
@@ -101,7 +102,7 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
   );
 };
 
-export default class EventEditView extends View {
+export default class EventEditView extends AbstractView {
   #point = null;
   #destination = null;
   #offers = null;
@@ -119,4 +120,24 @@ export default class EventEditView extends View {
   get template() {
     return createEventEditTemplate(this.#point, this.#destination, this.#offers, this.#availableOffers);
   }
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  };
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  };
 }

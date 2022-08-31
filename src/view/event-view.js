@@ -1,10 +1,10 @@
-import View from './view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   humanizeDateToTime,
   humanizeDateToTimeDate,
   humanizeDateToTimeDateMini,
   humanizeDateToDayMonth
-} from '../utils.js';
+} from '../utils/event.js';
 
 const createOffers = (offers) => {
   if (offers.length === 0) {
@@ -55,7 +55,7 @@ const createEventTemplate = (point, destination, offers) => (
   </li>`
 );
 
-export default class EventView extends View {
+export default class EventView extends AbstractView {
   #point = null;
   #destination = null;
   #offers = null;
@@ -71,4 +71,14 @@ export default class EventView extends View {
   get template() {
     return createEventTemplate(this.#point, this.#destination, this.#offers);
   }
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  };
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  };
 }
