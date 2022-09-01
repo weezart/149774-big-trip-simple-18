@@ -1,11 +1,11 @@
-import {OFFER_TYPES, DATE} from '../data.js';
+import {OFFER_TYPES} from '../const.js';
 import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import {getIntegerArray} from './offers.js';
 
 import dayjs from 'dayjs';
 
 const generateDate = () => {
-  const dateFrom = dayjs(DATE).add(getRandomInteger(0, 5), 'd').add(getRandomInteger(0, 5), 'h').add(getRandomInteger(0, 59), 'm');
+  const dateFrom = dayjs(new Date()).add(getRandomInteger(-10, 10), 'd').add(getRandomInteger(0, 5), 'h').add(getRandomInteger(0, 59), 'm');
   const dateTo = dayjs(dateFrom).add(getRandomInteger(0, 1), 'd').add(getRandomInteger(0, 5), 'h').add(getRandomInteger(0, 59), 'm');
   return {dateFrom, dateTo};
 };

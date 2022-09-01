@@ -1,4 +1,4 @@
-import {OFFERS, OFFER_TYPES} from '../data.js';
+import {OFFERS, OFFER_TYPES} from '../const.js';
 import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 
 let counterOffers = 0;
