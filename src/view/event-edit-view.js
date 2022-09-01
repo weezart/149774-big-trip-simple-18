@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../data.js';
+import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../const.js';
 import {ucFirst} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 
