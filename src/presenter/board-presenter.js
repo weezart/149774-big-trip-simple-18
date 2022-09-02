@@ -5,6 +5,7 @@ import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
+import {updateEvent} from '../utils/event.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -37,6 +38,11 @@ export default class BoardPresenter {
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
 
     this.#renderBoard();
+  };
+
+  #handleEventChange = (updatedEvent) => {
+    this.#tripPoints = updateEvent(this.#tripPoints, updatedEvent);
+    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent);
   };
 
   #renderSort = () => {
