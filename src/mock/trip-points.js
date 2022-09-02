@@ -1,4 +1,5 @@
 import {OFFER_TYPES} from '../const.js';
+import {nanoid} from 'nanoid';
 import {getRandomArrayItem, getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import {getIntegerArray} from './offers.js';
 
@@ -18,7 +19,7 @@ export const generateTripPoint = () => {
     dateFrom: date.dateFrom,
     dateTo: date.dateTo,
     destination: getRandomInteger(0, 9),
-    id: getRandomInteger(0, 9),
+    id: nanoid(),
     offers: getRandomizedReducedArray(getIntegerArray, getRandomInteger(0, 3)),
     type: getRandomArrayItem(OFFER_TYPES),
   };

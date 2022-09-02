@@ -21,6 +21,7 @@ export default class BoardPresenter {
   #offerTypes = [];
   #destinations = [];
   #tripPoints = [];
+  #eventPresenter = new Map();
 
   constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
     this.#boardContainer = boardContainer;
@@ -57,13 +58,18 @@ export default class BoardPresenter {
     remove(this.#eventAddComponent);
   };
 
+  #clearEventList = () => {
+    this.#eventPresenter.forEach((presenter) => presenter.destroy());
+    this.#eventPresenter.clear();
+  };
+
   #renderNoEvents = () => {
     render(this.#noEventComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 
   #renderBoard = () => {
     if (this.#tripPoints.length === 0) {
-      render(new NoEventsView(), this.#boardContainer);
+      this.#renderNoEvents();
       return;
     }
 
@@ -84,5 +90,6 @@ export default class BoardPresenter {
 
     const eventPresenter = new EventPresenter(this.#eventListComponent.element);
     eventPresenter.init(point, destination, offers, availableOffers);
+    this.#eventPresenter.set(point.id, eventPresenter);
   };
 }
