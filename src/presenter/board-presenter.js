@@ -1,11 +1,10 @@
 import SortView from '../view/sort-view.js';
 import EventListView from '../view/event-list-view.js';
-import EventEditView from '../view/event-edit-view.js';
 import EventAddView from '../view/event-add-view.js';
-import EventView from '../view/event-view.js';
 import NoEventsView from '../view/no-events-view';
-import {render, RenderPosition, replace, remove} from '../framework/render.js';
+import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
+import EventPresenter from './event-presenter.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -82,40 +81,8 @@ export default class BoardPresenter {
     const offers = this.#offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
     const availableOffers = this.#offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
 
-    const eventComponent = new EventView(point, destination, offers);
-    const eventEditComponent = new EventEditView(point, destination, offers, availableOffers);
 
-    const replaceCardToForm = () => {
-      replace(eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    eventEditComponent.setEditClickHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(eventComponent, this.#eventListComponent.element);
+    const eventPresenter = new EventPresenter(this.#eventListComponent.element);
+    eventPresenter.init(point, destination, offers, availableOffers);
   };
 }
