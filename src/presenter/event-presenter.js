@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
 
@@ -23,6 +23,9 @@ export default class EventPresenter {
     this.#offers = offers;
     this.#availableOffers = availableOffers;
 
+    const prevEventComponent = this.#eventComponent;
+    const prevEventEditComponent = this.#eventEditComponent;
+
     this.#eventComponent = new EventView(point, destination, offers);
     this.#eventEditComponent = new EventEditView(point, destination, offers, availableOffers);
 
@@ -30,7 +33,28 @@ export default class EventPresenter {
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setCloseClickHandler(this.#handleCloseClick);
 
-    render(this.#eventComponent, this.#eventListContainer);
+    if (prevEventComponent === null || prevEventEditComponent === null) {
+      render(this.#eventComponent, this.#eventListContainer);
+      return;
+    }
+
+    // Проверка на наличие в DOM необходима,
+    // чтобы не пытаться заменить то, что не было отрисовано
+    if (this.#eventListContainer.contains(prevEventComponent.element)) {
+      replace(this.#eventComponent, prevEventComponent);
+    }
+
+    if (this.#eventListContainer.contains(prevEventEditComponent.element)) {
+      replace(this.#eventEditComponent, prevEventEditComponent);
+    }
+
+    remove(prevEventComponent);
+    remove(prevEventEditComponent);
+  };
+
+  destroy = () => {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
   };
 
   #replaceCardToForm = () => {
