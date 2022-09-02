@@ -4,7 +4,7 @@ import EventEditView from '../view/event-edit-view.js';
 import EventAddView from '../view/event-add-view.js';
 import EventView from '../view/event-view.js';
 import NoEventsView from '../view/no-events-view';
-import {render, replace, remove} from '../framework/render.js';
+import {render, RenderPosition, replace, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 
 export default class BoardPresenter {
@@ -15,6 +15,8 @@ export default class BoardPresenter {
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
+  #sortComponent = new SortView();
+  #noEventComponent = new NoEventsView();
 
   #offers = [];
   #offerTypes = [];
@@ -37,21 +39,37 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  #renderSort = () => {
+    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderEvents = (from, to) => {
+    this.#tripPoints
+      .slice(from, to)
+      .forEach((point) => this.#renderEvent(point));
+  };
+
+  #renderEventList = () => {
+    render(this.#eventListComponent, this.#boardContainer);
+    this.#renderEvents(0, this.#tripPoints.length);
+
+    // Временные функции для проверки работы формы создания
+    render(this.#eventAddComponent, this.#eventListComponent.element);
+    remove(this.#eventAddComponent);
+  };
+
+  #renderNoEvents = () => {
+    render(this.#noEventComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #renderBoard = () => {
-    if (this.#tripPoints.length > 0) {
-      render(new SortView(), this.#boardContainer);
-      render(this.#eventListComponent, this.#boardContainer);
-
-      for (let i = 0; i < this.#tripPoints.length; i++) {
-        this.#renderEvent(this.#tripPoints[i]);
-      }
-
-      // Временные функции для проверки работы формы создания
-      render(this.#eventAddComponent, this.#eventListComponent.element);
-      remove(this.#eventAddComponent);
-    } else {
+    if (this.#tripPoints.length === 0) {
       render(new NoEventsView(), this.#boardContainer);
+      return;
     }
+
+    this.#renderSort();
+    this.#renderEventList();
   };
 
   #renderEvent = (point) => {
