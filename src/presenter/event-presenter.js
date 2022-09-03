@@ -4,6 +4,7 @@ import EventEditView from '../view/event-edit-view.js';
 
 export default class EventPresenter {
   #eventListContainer = null;
+  #changeData = null;
 
   #eventComponent = null;
   #eventEditComponent = null;
@@ -13,8 +14,10 @@ export default class EventPresenter {
   #offers = null;
   #availableOffers = null;
 
-  constructor(eventListContainer) {
+
+  constructor(eventListContainer, changeData) {
     this.#eventListContainer = eventListContainer;
+    this.#changeData = changeData;
   }
 
   init = (point, destination, offers, availableOffers) => {
@@ -78,7 +81,8 @@ export default class EventPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point, destination, offers, availableOffers) => {
+    this.#changeData(point, destination, offers, availableOffers);
     this.#replaceFormToCard();
   };
 
