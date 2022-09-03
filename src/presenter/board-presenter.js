@@ -40,6 +40,10 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  #handleModeChange = () => {
+    this.#eventPresenter.forEach((presenter) => presenter.resetView());
+  };
+
   #handleEventChange = (updatedEvent, destination, offers, availableOffers) => {
     this.#tripPoints = updateEvent(this.#tripPoints, updatedEvent);
 
@@ -95,7 +99,7 @@ export default class BoardPresenter {
     const availableOffers = this.#offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
 
 
-    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#handleEventChange);
+    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#handleEventChange, this.#handleModeChange);
     eventPresenter.init(point, destination, offers, availableOffers);
     this.#eventPresenter.set(point.id, eventPresenter);
   };
