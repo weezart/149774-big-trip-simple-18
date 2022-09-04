@@ -39,11 +39,8 @@ export default class BoardPresenter {
     this.#offers = [...this.#offersModel.offers];
     this.#offerTypes = [...this.#offersModel.offerTypes];
     this.#destinations = [...this.#destinationsModel.destinations];
-    this.#tripPoints = [...this.#tripPointsModel.tripPoints];
-    this.#sourcedBoardPoints = [...this.#tripPointsModel.tripPoints];
-
-
-
+    this.#tripPoints = [...this.#tripPointsModel.tripPoints].sort(sortByDay);
+    this.#sourcedBoardPoints = [...this.#tripPoints];
     this.#renderBoard();
   };
 
@@ -60,23 +57,25 @@ export default class BoardPresenter {
 
   #sortPoints = (sortType) => {
     switch (sortType) {
+      case SortType.DAY:
+        this.#tripPoints.sort(sortByDay);
+        break;
       case SortType.PRICE:
         this.#tripPoints.sort(sortByPrice);
         break;
-      default:
-        this.#tripPoints.sort(sortByDay);
     }
+
+    this.#currentSortType = sortType;
   };
 
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
     if (this.#currentSortType === sortType) {
       return;
     }
 
     this.#sortPoints(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this.#clearEventList();
+    this.#renderEventList();
   };
 
   #renderSort = () => {
