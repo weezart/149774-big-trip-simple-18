@@ -6,6 +6,8 @@ import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import {updateEvent} from '../utils/event.js';
+import {sortByDay, sortByPrice} from '../utils/event.js';
+import {SortType} from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -23,6 +25,8 @@ export default class BoardPresenter {
   #destinations = [];
   #tripPoints = [];
   #eventPresenter = new Map();
+  #currentSortType = SortType.DAY;
+  #sourcedBoardPoints = [];
 
   constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
     this.#boardContainer = boardContainer;
@@ -36,6 +40,9 @@ export default class BoardPresenter {
     this.#offerTypes = [...this.#offersModel.offerTypes];
     this.#destinations = [...this.#destinationsModel.destinations];
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
+    this.#sourcedBoardPoints = [...this.#tripPointsModel.tripPoints];
+
+
 
     this.#renderBoard();
   };
@@ -46,12 +53,28 @@ export default class BoardPresenter {
 
   #handleEventChange = (updatedEvent, destination, offers, availableOffers) => {
     this.#tripPoints = updateEvent(this.#tripPoints, updatedEvent);
+    this.#sourcedBoardPoints = updateEvent(this.#sourcedBoardPoints, updatedEvent);
 
     this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, destination, offers, availableOffers);
   };
 
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.PRICE:
+        this.#tripPoints.sort(sortByPrice);
+        break;
+      default:
+        this.#tripPoints.sort(sortByDay);
+    }
+  };
+
   #handleSortTypeChange = (sortType) => {
     // - Сортируем задачи
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
     // - Очищаем список
     // - Рендерим список заново
   };
