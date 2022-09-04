@@ -57,12 +57,11 @@ export default class BoardPresenter {
 
   #sortPoints = (sortType) => {
     switch (sortType) {
-      case SortType.DAY:
-        this.#tripPoints.sort(sortByDay);
-        break;
       case SortType.PRICE:
         this.#tripPoints.sort(sortByPrice);
         break;
+      default:
+        this.#tripPoints.sort(sortByDay);
     }
 
     this.#currentSortType = sortType;
