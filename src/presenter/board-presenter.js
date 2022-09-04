@@ -50,8 +50,15 @@ export default class BoardPresenter {
     this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, destination, offers, availableOffers);
   };
 
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
+
   #renderSort = () => {
     render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
 
   #renderEvents = (from, to) => {
