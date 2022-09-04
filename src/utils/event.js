@@ -20,3 +20,29 @@ export const updateEvent = (events, update) => {
     ...events.slice(index + 1),
   ];
 };
+
+const getWeightForNull = (A, B) => {
+  if (A === null && B === null) {
+    return 0;
+  }
+
+  if (A === null) {
+    return 1;
+  }
+
+  if (B === null) {
+    return -1;
+  }
+};
+
+export const sortByDay = (pointA, pointB) => {
+  const weight = getWeightForNull(pointA.dateFrom, pointB.dateFrom);
+
+  return weight ?? dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
+};
+
+export const sortByPrice = (pointA, pointB) => {
+  const weight = getWeightForNull(pointA.basePrice, pointB.basePrice);
+
+  return weight ?? pointB.basePrice - pointA.basePrice;
+};
