@@ -131,6 +131,12 @@ export default class EventEditView extends AbstractStatefulView {
     return createEventEditTemplate(this._state, this.#eventsData);
   }
 
+  reset = (point) => {
+    this.updateElement(
+      EventEditView.parsePointToState(point),
+    );
+  };
+
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
