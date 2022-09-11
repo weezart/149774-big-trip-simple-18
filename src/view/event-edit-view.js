@@ -17,7 +17,7 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -115,11 +115,7 @@ export default class EventEditView extends AbstractStatefulView {
     this.#offers = offers;
     this.#availableOffers = availableOffers;
 
-    Array.from(this.element.querySelectorAll('.event__type-input')).forEach(
-      (typeElement) => typeElement.addEventListener('click', this.#eventTypeToggleHandler)
-    );
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    this.#setInnerHandlers();
   }
 
   get template() {
@@ -129,6 +125,11 @@ export default class EventEditView extends AbstractStatefulView {
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
   #formSubmitHandler = (evt) => {
@@ -168,6 +169,14 @@ export default class EventEditView extends AbstractStatefulView {
         destination: evt.target.value,
       });
     }
+  };
+
+  #setInnerHandlers = () => {
+    Array.from(this.element.querySelectorAll('.event__type-input')).forEach(
+      (typeElement) => typeElement.addEventListener('click', this.#eventTypeToggleHandler)
+    );
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
   };
 
   static parsePointToState = (point) => ({...point});
