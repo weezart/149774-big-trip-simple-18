@@ -6,7 +6,7 @@ import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import {updateEvent} from '../utils/event.js';
-import {sortByDay, sortByPrice} from '../utils/event.js';
+import {sortByDay, sortByPrice, unique} from '../utils/event.js';
 import {SortType} from '../const.js';
 
 export default class BoardPresenter {
@@ -125,7 +125,7 @@ export default class BoardPresenter {
   #renderEvent = (point) => {
     // Костыль, проставляющий правильные случайные id из массива только возможных офферов
     const offerTypesId = this.#offerTypes.find((offerType) => offerType.type === point.type);
-    point.offers = getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3));
+    point.offers = unique(getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3)));
 
     const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#eventsData, this.#handleEventChange, this.#handleModeChange);
     eventPresenter.init(point);
