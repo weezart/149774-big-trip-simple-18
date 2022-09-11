@@ -114,6 +114,12 @@ export default class EventEditView extends AbstractStatefulView {
     this.#destination = destination;
     this.#offers = offers;
     this.#availableOffers = availableOffers;
+
+    Array.from(this.element.querySelectorAll('.event__type-input')).forEach(
+      (typeElement) => typeElement.addEventListener('click', this.#eventTypeToggleHandler)
+    );
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
   }
 
   get template() {
@@ -138,6 +144,30 @@ export default class EventEditView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
+  };
+
+  #eventTypeToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: [],
+    });
+  };
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
+  #eventDestinationInputHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.value) {
+      this.updateElement({
+        destination: evt.target.value,
+      });
+    }
   };
 
   static parsePointToState = (point) => ({...point});
