@@ -3,7 +3,12 @@ import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js'
 import {ucFirst} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 
-const createEventEditTemplate = (point, destination, offers, availableOffers) => {
+const createEventEditTemplate = (point, eventsData) => {
+  const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
+  const destination = eventsData.destinations.find((destinationsItem) => destinationsItem.id === point.destination);
+  const offers = eventsData.offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
+  const availableOffers = eventsData.offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
+
   const offersId = new Set();
 
   for (const offersItem of offers) {
@@ -103,23 +108,19 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
 };
 
 export default class EventEditView extends AbstractStatefulView {
-  #destination = null;
-  #offers = null;
-  #availableOffers = null;
+  #eventsData = null;
 
-  constructor(point = BLANK_POINT, destination, offers, availableOffers) {
+  constructor(point = BLANK_POINT, eventsData) {
     super();
 
     this._state = EventEditView.parsePointToState(point);
-    this.#destination = destination;
-    this.#offers = offers;
-    this.#availableOffers = availableOffers;
+    this.#eventsData = eventsData;
 
     this.#setInnerHandlers();
   }
 
   get template() {
-    return createEventEditTemplate(this._state, this.#destination, this.#offers, this.#availableOffers);
+    return createEventEditTemplate(this._state, this.#eventsData);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -134,7 +135,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EventEditView.parseStateToPoint(this._state), this.#destination, this.#offers, this.#availableOffers);
+    this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
   };
 
   setCloseClickHandler = (callback) => {

@@ -14,6 +14,7 @@ export default class BoardPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #tripPointsModel = null;
+  #eventsData = null;
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
@@ -39,6 +40,11 @@ export default class BoardPresenter {
     this.#offers = [...this.#offersModel.offers];
     this.#offerTypes = [...this.#offersModel.offerTypes];
     this.#destinations = [...this.#destinationsModel.destinations];
+    this.#eventsData = {
+      offers: this.#offers,
+      offerTypes: this.#offerTypes,
+      destinations: this.#destinations
+    };
     this.#tripPoints = [...this.#tripPointsModel.tripPoints].sort(sortByDay);
     this.#sourcedBoardPoints = [...this.#tripPoints];
     this.#renderBoard();
@@ -48,11 +54,11 @@ export default class BoardPresenter {
     this.#eventPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handleEventChange = (updatedEvent, destination, offers, availableOffers) => {
+  #handleEventChange = (updatedEvent) => {
     this.#tripPoints = updateEvent(this.#tripPoints, updatedEvent);
     this.#sourcedBoardPoints = updateEvent(this.#sourcedBoardPoints, updatedEvent);
 
-    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, destination, offers, availableOffers);
+    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, this.#eventsData);
   };
 
   #sortPoints = (sortType) => {
@@ -117,18 +123,12 @@ export default class BoardPresenter {
   };
 
   #renderEvent = (point) => {
-    const offerTypesId = this.#offerTypes.find((offerType) => offerType.type === point.type);
-
     // Костыль, проставляющий правильные случайные id из массива только возможных офферов
+    const offerTypesId = this.#offerTypes.find((offerType) => offerType.type === point.type);
     point.offers = getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3));
 
-    const destination = this.#destinations.find((destinationsItem) => destinationsItem.id === point.destination);
-    const offers = this.#offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
-    const availableOffers = this.#offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
-
-
-    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#handleEventChange, this.#handleModeChange);
-    eventPresenter.init(point, destination, offers, availableOffers);
+    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#eventsData, this.#handleEventChange, this.#handleModeChange);
+    eventPresenter.init(point);
     this.#eventPresenter.set(point.id, eventPresenter);
   };
 }

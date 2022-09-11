@@ -60,12 +60,12 @@ export default class EventView extends AbstractView {
   #destination = null;
   #offers = null;
 
-  constructor(point, destination, offers) {
+  constructor(point, eventsData) {
     super();
 
     this.#point = point;
-    this.#destination = destination;
-    this.#offers = offers;
+    this.#destination = eventsData.destinations.find((destinationsItem) => destinationsItem.id === point.destination);
+    this.#offers = eventsData.offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
   }
 
   get template() {
