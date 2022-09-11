@@ -67,4 +67,13 @@ export const DESCRIPTIONS = [
   'In rutrum ac purus sit amet tempus.'
 ];
 
+export const BLANK_POINT = {
+  basePrice: null,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  offers:[],
+  type: null,
+};
+
 export const PHOTO_URL = 'http://picsum.photos/248/152?r=';

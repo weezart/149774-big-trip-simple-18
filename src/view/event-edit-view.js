@@ -1,5 +1,5 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS} from '../const.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
 import {ucFirst} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 
@@ -102,23 +102,22 @@ const createEventEditTemplate = (point, destination, offers, availableOffers) =>
   );
 };
 
-export default class EventEditView extends AbstractView {
-  #point = null;
+export default class EventEditView extends AbstractStatefulView {
   #destination = null;
   #offers = null;
   #availableOffers = null;
 
-  constructor(point, destination, offers, availableOffers) {
+  constructor(point = BLANK_POINT, destination, offers, availableOffers) {
     super();
 
-    this.#point = point;
+    this._state = EventEditView.parsePointToState(point);
     this.#destination = destination;
     this.#offers = offers;
     this.#availableOffers = availableOffers;
   }
 
   get template() {
-    return createEventEditTemplate(this.#point, this.#destination, this.#offers, this.#availableOffers);
+    return createEventEditTemplate(this._state, this.#destination, this.#offers, this.#availableOffers);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -128,7 +127,7 @@ export default class EventEditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point, this.#destination, this.#offers, this.#availableOffers);
+    this._callback.formSubmit(EventEditView.parseStateToPoint(this._state), this.#destination, this.#offers, this.#availableOffers);
   };
 
   setCloseClickHandler = (callback) => {
@@ -140,4 +139,8 @@ export default class EventEditView extends AbstractView {
     evt.preventDefault();
     this._callback.closeClick();
   };
+
+  static parsePointToState = (point) => ({...point});
+
+  static parseStateToPoint = (state) => ({...state});
 }
