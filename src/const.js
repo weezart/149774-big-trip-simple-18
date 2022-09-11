@@ -51,7 +51,9 @@ export const DESTINATIONS = [
   'Geneva',
   'Paris',
   'Moscow',
-  'London'
+  'London',
+  'Tokio',
+  'Barcelona'
 ];
 
 export const DESCRIPTIONS = [
@@ -67,4 +69,13 @@ export const DESCRIPTIONS = [
   'In rutrum ac purus sit amet tempus.'
 ];
 
-export const PHOTO_URL = 'http://picsum.photos/248/152?r=';
+export const BLANK_POINT = {
+  basePrice: null,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  offers:[],
+  type: null,
+};
+
+export const PHOTO_URL = 'https://dummyimage.com/248x152';

@@ -9,6 +9,7 @@ const Mode = {
 
 export default class EventPresenter {
   #eventListContainer = null;
+  #eventsData = null;
   #changeData = null;
   #changeMode = null;
 
@@ -16,29 +17,24 @@ export default class EventPresenter {
   #eventEditComponent = null;
 
   #point = null;
-  #destination = null;
-  #offers = null;
-  #availableOffers = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor(eventListContainer, changeData, changeMode) {
+  constructor(eventListContainer, eventsData, changeData, changeMode) {
     this.#eventListContainer = eventListContainer;
+    this.#eventsData = eventsData;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
   }
 
-  init = (point, destination, offers, availableOffers) => {
+  init = (point) => {
     this.#point = point;
-    this.#destination = destination;
-    this.#offers = offers;
-    this.#availableOffers = availableOffers;
 
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 
-    this.#eventComponent = new EventView(point, destination, offers);
-    this.#eventEditComponent = new EventEditView(point, destination, offers, availableOffers);
+    this.#eventComponent = new EventView(point, this.#eventsData);
+    this.#eventEditComponent = new EventEditView(point, this.#eventsData);
 
     this.#eventComponent.setEditClickHandler(this.#handleEditClick);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
@@ -63,6 +59,7 @@ export default class EventPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#eventEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -88,6 +85,7 @@ export default class EventPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#eventEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -96,8 +94,8 @@ export default class EventPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = (point, destination, offers, availableOffers) => {
-    this.#changeData(point, destination, offers, availableOffers);
+  #handleFormSubmit = (point) => {
+    this.#changeData(point);
     this.#replaceFormToCard();
   };
 
