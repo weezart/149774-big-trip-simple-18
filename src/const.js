@@ -51,7 +51,9 @@ export const DESTINATIONS = [
   'Geneva',
   'Paris',
   'Moscow',
-  'London'
+  'London',
+  'Tokio',
+  'Barcelona'
 ];
 
 export const DESCRIPTIONS = [
@@ -76,4 +78,4 @@ export const BLANK_POINT = {
   type: null,
 };
 
-export const PHOTO_URL = 'http://picsum.photos/248/152?r=';
+export const PHOTO_URL = 'https://dummyimage.com/248x152';

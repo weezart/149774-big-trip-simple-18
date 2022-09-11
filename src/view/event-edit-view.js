@@ -101,6 +101,13 @@ const createEventEditTemplate = (point, eventsData) => {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${destination.description}</p>
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${destination.pictures.map((picture) => `
+                  <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+                `).join('\n')}
+            </div>
+          </div>
         </section>
       </section>
     </form>
@@ -182,8 +189,9 @@ export default class EventEditView extends AbstractStatefulView {
   #eventDestinationInputHandler = (evt) => {
     evt.preventDefault();
     if (evt.target.value) {
+      const currentDestination = this.#eventsData.destinations.find((destinationsItem) => destinationsItem.name === evt.target.value);
       this.updateElement({
-        destination: evt.target.value,
+        destination: currentDestination.id,
       });
     }
   };
