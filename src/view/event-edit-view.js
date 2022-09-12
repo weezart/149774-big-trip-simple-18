@@ -120,6 +120,7 @@ const createEventEditTemplate = (point, eventsData) => {
 
 export default class EventEditView extends AbstractStatefulView {
   #eventsData = null;
+  #datepicker = null;
 
   constructor(point = BLANK_POINT, eventsData) {
     super();
@@ -133,6 +134,17 @@ export default class EventEditView extends AbstractStatefulView {
   get template() {
     return createEventEditTemplate(this._state, this.#eventsData);
   }
+
+  // Перегружаем метод родителя removeElement,
+  // чтобы при удалении удалялся более не нужный календарь
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
 
   reset = (point) => {
     this.updateElement(
@@ -203,6 +215,21 @@ export default class EventEditView extends AbstractStatefulView {
         destination: currentDestination.id,
       });
     }
+  };
+
+  #eventDateChangeHandler = ([userDate]) => {
+    console.log(userDate);
+  };
+
+  #setDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'j F',
+        defaultDate: this._state.dateFrom,
+        onChange: this.#eventDateChangeHandler, // На событие flatpickr передаём наш колбэк
+      },
+    );
   };
 
   #setInnerHandlers = () => {
