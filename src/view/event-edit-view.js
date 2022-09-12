@@ -226,13 +226,13 @@ export default class EventEditView extends AbstractStatefulView {
   };
 
   #changeDateFromHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate
     });
   };
 
   #changeDateToHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate
     });
   };
@@ -241,8 +241,8 @@ export default class EventEditView extends AbstractStatefulView {
     this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
+        'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateFrom,
         enableTime: true,
         onChange: this.#changeDateFromHandler
       }
@@ -251,8 +251,8 @@ export default class EventEditView extends AbstractStatefulView {
     this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
+        'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateTo,
         enableTime: true,
         onChange: this.#changeDateToHandler
       }
