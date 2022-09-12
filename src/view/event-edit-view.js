@@ -2,6 +2,9 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
 import {ucFirst} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEventEditTemplate = (point, eventsData) => {
   const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
