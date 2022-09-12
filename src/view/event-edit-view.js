@@ -2,6 +2,9 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
 import {ucFirst} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEventEditTemplate = (point, eventsData) => {
   const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
@@ -117,6 +120,8 @@ const createEventEditTemplate = (point, eventsData) => {
 
 export default class EventEditView extends AbstractStatefulView {
   #eventsData = null;
+  #dateFromPicker = null;
+  #dateToPicker = null;
 
   constructor(point = BLANK_POINT, eventsData) {
     super();
@@ -125,11 +130,28 @@ export default class EventEditView extends AbstractStatefulView {
     this.#eventsData = eventsData;
 
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
     return createEventEditTemplate(this._state, this.#eventsData);
   }
+
+  // Перегружаем метод родителя removeElement,
+  // чтобы при удалении удалялся более не нужный календарь
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#dateFromPicker) {
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+
+    if (this.#dateToPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+    }
+  };
 
   reset = (point) => {
     this.updateElement(
@@ -144,6 +166,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
@@ -200,6 +223,40 @@ export default class EventEditView extends AbstractStatefulView {
         destination: currentDestination.id,
       });
     }
+  };
+
+  #changeDateFromHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate
+    });
+  };
+
+  #changeDateToHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate
+    });
+  };
+
+  #setDatepicker = () => {
+    this.#dateFromPicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        enableTime: true,
+        onChange: this.#changeDateFromHandler
+      }
+    );
+
+    this.#dateToPicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        enableTime: true,
+        onChange: this.#changeDateToHandler
+      }
+    );
   };
 
   #setInnerHandlers = () => {
