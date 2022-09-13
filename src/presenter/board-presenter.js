@@ -5,7 +5,6 @@ import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
-import {updateEvent} from '../utils/event.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
 import {SortType} from '../const.js';
 
@@ -14,20 +13,14 @@ export default class BoardPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #tripPointsModel = null;
-  #eventsData = null;
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
   #sortComponent = new SortView();
   #noEventComponent = new NoEventsView();
 
-  #offers = [];
-  #offerTypes = [];
-  #destinations = [];
-  #tripPoints = [];
   #eventPresenter = new Map();
   #currentSortType = SortType.DAY;
-  #sourcedBoardPoints = [];
 
   constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
     this.#boardContainer = boardContainer;
@@ -37,20 +30,28 @@ export default class BoardPresenter {
   }
 
   get points() {
-    return this.#tripPointsModel.tripPoints;
+    switch (this.#currentSortType) {
+      case SortType.PRICE:
+        return [...this.#tripPointsModel.tripPoints].sort(sortByPrice);
+    }
+
+    return [...this.#tripPointsModel.tripPoints].sort(sortByDay);
+  }
+
+  get eventsData() {
+    const eventsOffers = [...this.#offersModel.offers];
+    const eventsOfferTypes = [...this.#offersModel.offerTypes];
+    const eventsDestinations = [...this.#destinationsModel.destinations];
+
+    return {
+      offers: eventsOffers,
+      offerTypes: eventsOfferTypes,
+      destinations: eventsDestinations
+    };
   }
 
   init = () => {
-    this.#offers = [...this.#offersModel.offers];
-    this.#offerTypes = [...this.#offersModel.offerTypes];
-    this.#destinations = [...this.#destinationsModel.destinations];
-    this.#eventsData = {
-      offers: this.#offers,
-      offerTypes: this.#offerTypes,
-      destinations: this.#destinations
-    };
-    this.#tripPoints = [...this.#tripPointsModel.tripPoints].sort(sortByDay);
-    this.#sourcedBoardPoints = [...this.#tripPoints];
+
     this.#renderBoard();
   };
 
@@ -59,22 +60,9 @@ export default class BoardPresenter {
   };
 
   #handleEventChange = (updatedEvent) => {
-    this.#tripPoints = updateEvent(this.#tripPoints, updatedEvent);
-    this.#sourcedBoardPoints = updateEvent(this.#sourcedBoardPoints, updatedEvent);
+    // Здесь будем вызывать обновление модели
 
-    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, this.#eventsData);
-  };
-
-  #sortPoints = (sortType) => {
-    switch (sortType) {
-      case SortType.PRICE:
-        this.#tripPoints.sort(sortByPrice);
-        break;
-      default:
-        this.#tripPoints.sort(sortByDay);
-    }
-
-    this.#currentSortType = sortType;
+    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, this.eventsData);
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -82,7 +70,7 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearEventList();
     this.#renderEventList();
   };
@@ -92,15 +80,13 @@ export default class BoardPresenter {
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
 
-  #renderEvents = (from, to) => {
-    this.#tripPoints
-      .slice(from, to)
-      .forEach((point) => this.#renderEvent(point));
+  #renderEvents = (points) => {
+    points.forEach((point) => this.#renderEvent(point));
   };
 
   #renderEventList = () => {
     render(this.#eventListComponent, this.#boardContainer);
-    this.#renderEvents(0, this.#tripPoints.length);
+    this.#renderEvents(this.points);
 
     // Временные функции для проверки работы формы создания
     render(this.#eventAddComponent, this.#eventListComponent.element);
@@ -117,7 +103,7 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
-    if (this.#tripPoints.length === 0) {
+    if (this.points.length === 0) {
       this.#renderNoEvents();
       return;
     }
@@ -128,10 +114,10 @@ export default class BoardPresenter {
 
   #renderEvent = (point) => {
     // Костыль, проставляющий правильные случайные id из массива только возможных офферов
-    const offerTypesId = this.#offerTypes.find((offerType) => offerType.type === point.type);
+    const offerTypesId = this.eventsData.offerTypes.find((offerType) => offerType.type === point.type);
     point.offers = unique(getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3)));
 
-    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.#eventsData, this.#handleEventChange, this.#handleModeChange);
+    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.eventsData, this.#handleEventChange, this.#handleModeChange);
     eventPresenter.init(point);
     this.#eventPresenter.set(point.id, eventPresenter);
   };
