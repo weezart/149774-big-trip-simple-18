@@ -16,8 +16,8 @@ export default class BoardPresenter {
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
-  #sortComponent = new SortView();
   #noEventComponent = new NoEventsView();
+  #sortComponent = null;
 
   #eventPresenter = new Map();
   #currentSortType = SortType.DAY;
@@ -82,10 +82,12 @@ export default class BoardPresenter {
         this.#eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
         break;
     }
   };
@@ -96,26 +98,19 @@ export default class BoardPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearEventList();
-    this.#renderEventList();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 
   #renderSort = () => {
-    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    this.#sortComponent = new SortView(this.#currentSortType);
+
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 
   #renderEvents = (points) => {
     points.forEach((point) => this.#renderEvent(point));
-  };
-
-  #renderEventList = () => {
-    render(this.#eventListComponent, this.#boardContainer);
-    this.#renderEvents(this.points);
-
-    // Временные функции для проверки работы формы создания
-    render(this.#eventAddComponent, this.#eventListComponent.element);
-    remove(this.#eventAddComponent);
   };
 
   #clearEventList = () => {
@@ -127,14 +122,34 @@ export default class BoardPresenter {
     render(this.#noEventComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 
+  #clearBoard = ({resetSortType = false} = {}) => {
+    this.#eventPresenter.forEach((presenter) => presenter.destroy());
+    this.#eventPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noEventComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+  };
+
   #renderBoard = () => {
-    if (this.points.length === 0) {
+    const points = this.points;
+    const pointCount = points.length;
+
+    if (pointCount === 0) {
       this.#renderNoEvents();
       return;
     }
 
     this.#renderSort();
-    this.#renderEventList();
+    render(this.#eventListComponent, this.#boardContainer);
+    this.#renderEvents(this.points);
+
+    // Временные функции для проверки работы формы создания
+    render(this.#eventAddComponent, this.#eventListComponent.element);
+    remove(this.#eventAddComponent);
   };
 
   #renderEvent = (point) => {
