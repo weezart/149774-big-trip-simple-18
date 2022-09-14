@@ -44,3 +44,5 @@ export const unique = (array) => {
 
   return result;
 };
+
+export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');

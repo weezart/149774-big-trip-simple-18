@@ -113,11 +113,6 @@ export default class BoardPresenter {
     points.forEach((point) => this.#renderEvent(point));
   };
 
-  #clearEventList = () => {
-    this.#eventPresenter.forEach((presenter) => presenter.destroy());
-    this.#eventPresenter.clear();
-  };
-
   #renderNoEvents = () => {
     render(this.#noEventComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
