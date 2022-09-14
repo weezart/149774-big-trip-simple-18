@@ -11,7 +11,7 @@ const generateDate = () => {
   return {dateFrom, dateTo};
 };
 
-export const generateTripPoint = () => {
+export const generatePoint = () => {
   const date = generateDate();
 
   return {

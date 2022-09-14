@@ -12,7 +12,7 @@ export default class BoardPresenter {
   #boardContainer = null;
   #offersModel = null;
   #destinationsModel = null;
-  #tripPointsModel = null;
+  #pointsModel = null;
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
@@ -22,20 +22,22 @@ export default class BoardPresenter {
   #eventPresenter = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor(boardContainer, offersModel, destinationsModel, tripPointsModel) {
+  constructor(boardContainer, offersModel, destinationsModel, pointsModel) {
     this.#boardContainer = boardContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-    this.#tripPointsModel = tripPointsModel;
+    this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return [...this.#tripPointsModel.tripPoints].sort(sortByPrice);
+        return [...this.#pointsModel.points].sort(sortByPrice);
     }
 
-    return [...this.#tripPointsModel.tripPoints].sort(sortByDay);
+    return [...this.#pointsModel.points].sort(sortByDay);
   }
 
   get eventsData() {
@@ -51,7 +53,6 @@ export default class BoardPresenter {
   }
 
   init = () => {
-
     this.#renderBoard();
   };
 
@@ -59,10 +60,12 @@ export default class BoardPresenter {
     this.#eventPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handleEventChange = (updatedEvent) => {
-    // Здесь будем вызывать обновление модели
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+  };
 
-    this.#eventPresenter.get(updatedEvent.id).init(updatedEvent, this.eventsData);
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -117,7 +120,7 @@ export default class BoardPresenter {
     const offerTypesId = this.eventsData.offerTypes.find((offerType) => offerType.type === point.type);
     point.offers = unique(getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3)));
 
-    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.eventsData, this.#handleEventChange, this.#handleModeChange);
+    const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.eventsData, this.#handleViewAction, this.#handleModeChange);
     eventPresenter.init(point);
     this.#eventPresenter.set(point.id, eventPresenter);
   };
