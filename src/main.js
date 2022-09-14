@@ -5,6 +5,7 @@ import NewEventButtonView from './view/new-event-button-view.js';
 import OffersModel from './model/offers-model.js';
 import DestinationsModel from './model/destinations-model.js';
 import PointsModel from './model/points-model.js';
+import FilterModel from './model/filter-model.js';
 import {generateEventFilter} from './mock/event-filter.js';
 
 const siteHeaderElement = document.querySelector('.trip-main');
@@ -14,6 +15,7 @@ const filtersElement = document.querySelector('.trip-controls__filters');
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const tripPointsModel = new PointsModel();
+const filterModel = new FilterModel();
 
 const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, tripPointsModel);
 const eventFilters = generateEventFilter(tripPointsModel.points);
