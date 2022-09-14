@@ -6,7 +6,7 @@ import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
-import {SortType} from '../const.js';
+import {SortType, UpdateType, UserAction} from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -61,11 +61,33 @@ export default class BoardPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
     console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка
+        this.#eventPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску
+        break;
+    }
   };
 
   #handleSortTypeChange = (sortType) => {
