@@ -6,13 +6,7 @@ import OffersModel from './model/offers-model.js';
 import DestinationsModel from './model/destinations-model.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
-
-const filters = [
-  {
-    type: 'everything',
-    name: 'EVERYTHING',
-  },
-];
+import FilterPresenter from './presenter/filter-presenter.js';
 
 const siteHeaderElement = document.querySelector('.trip-main');
 const siteMainElement = document.querySelector('.trip-events');
@@ -24,7 +18,9 @@ const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 
 const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, pointsModel);
+const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsModel);
 
 render(new NewEventButtonView(), siteHeaderElement);
-render(new FiltersView(filters, 'everything'), filtersElement);
+
+filterPresenter.init();
 boardPresenter.init();
