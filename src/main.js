@@ -1,4 +1,3 @@
-import FiltersView from './view/filters-view.js';
 import {render} from './framework/render.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import NewEventButtonView from './view/new-event-button-view.js';
@@ -17,7 +16,7 @@ const destinationsModel = new DestinationsModel();
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 
-const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, pointsModel);
+const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsModel);
 
 render(new NewEventButtonView(), siteHeaderElement);

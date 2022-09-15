@@ -5,6 +5,7 @@ import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
+import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
 import {SortType, UpdateType, UserAction} from '../const.js';
 
@@ -13,6 +14,7 @@ export default class BoardPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
@@ -22,22 +24,28 @@ export default class BoardPresenter {
   #eventPresenter = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor(boardContainer, offersModel, destinationsModel, pointsModel) {
+  constructor(boardContainer, offersModel, destinationsModel, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = eventFilter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortByPrice);
+        return filteredPoints.sort(sortByPrice);
     }
 
-    return [...this.#pointsModel.points].sort(sortByDay);
+    return filteredPoints.sort(sortByDay);
   }
 
   get eventsData() {
@@ -75,7 +83,6 @@ export default class BoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка
