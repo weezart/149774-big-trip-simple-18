@@ -7,7 +7,7 @@ import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -18,11 +18,12 @@ export default class BoardPresenter {
 
   #eventListComponent = new EventListView();
   #eventAddComponent = new EventAddView();
-  #noEventComponent = new NoEventsView();
+  #noEventComponent = null;
   #sortComponent = null;
 
   #eventPresenter = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor(boardContainer, offersModel, destinationsModel, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -36,9 +37,9 @@ export default class BoardPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = eventFilter[filterType](points);
+    const filteredPoints = eventFilter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.PRICE:
@@ -121,6 +122,8 @@ export default class BoardPresenter {
   };
 
   #renderNoEvents = () => {
+    this.#noEventComponent = new NoEventsView(this.#filterType);
+
     render(this.#noEventComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 
@@ -129,7 +132,10 @@ export default class BoardPresenter {
     this.#eventPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noEventComponent);
+
+    if (this.#noEventComponent) {
+      remove(this.#noEventComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
