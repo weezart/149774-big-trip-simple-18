@@ -6,6 +6,26 @@ import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
+const createDestinationTemplate = (destination) => {
+  if (destination) {
+    return (`
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${destination ? destination.description : ''}</p>
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${destination.pictures.map((picture) => `
+              <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+            `).join('\n')}
+          </div>
+        </div>
+      </section>
+    `);
+  } else {
+    return '';
+  }
+};
+
 const createEventEditTemplate = (point, eventsData) => {
   const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
   const destination = eventsData.destinations.find((destinationsItem) => destinationsItem.id === point.destination);
@@ -48,7 +68,7 @@ const createEventEditTemplate = (point, eventsData) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${point.type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${DESTINATIONS.map((DESTINATIONS_ITEM) => `
               <option value="${DESTINATIONS_ITEM}"></option>
@@ -69,7 +89,7 @@ const createEventEditTemplate = (point, eventsData) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice !== null ? point.basePrice : ''}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -101,17 +121,7 @@ const createEventEditTemplate = (point, eventsData) => {
           </div>
         </section>
 
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${destination.pictures.map((picture) => `
-                  <img class="event__photo" src="${picture.src}" alt="${picture.description}">
-                `).join('\n')}
-            </div>
-          </div>
-        </section>
+        ${createDestinationTemplate(destination)}
       </section>
     </form>
   </li>`

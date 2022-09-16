@@ -1,10 +1,10 @@
 import SortView from '../view/sort-view.js';
 import EventListView from '../view/event-list-view.js';
-import EventAddView from '../view/event-add-view.js';
 import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
+import EventNewPresenter from './event-new-presenter.js';
 import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
@@ -17,11 +17,11 @@ export default class BoardPresenter {
   #filterModel = null;
 
   #eventListComponent = new EventListView();
-  #eventAddComponent = new EventAddView();
   #noEventComponent = null;
   #sortComponent = null;
 
   #eventPresenter = new Map();
+  #eventNewPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
@@ -31,6 +31,8 @@ export default class BoardPresenter {
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+
+    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent.element, this.eventsData, this.#handleViewAction);
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -65,7 +67,14 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  createEvent = (callback) => {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#eventNewPresenter.init(callback);
+  };
+
   #handleModeChange = () => {
+    this.#eventNewPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -128,6 +137,7 @@ export default class BoardPresenter {
   };
 
   #clearBoard = ({resetSortType = false} = {}) => {
+    this.#eventNewPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.destroy());
     this.#eventPresenter.clear();
 
@@ -154,10 +164,6 @@ export default class BoardPresenter {
     this.#renderSort();
     render(this.#eventListComponent, this.#boardContainer);
     this.#renderEvents(this.points);
-
-    // Временные функции для проверки работы формы создания
-    render(this.#eventAddComponent, this.#eventListComponent.element);
-    remove(this.#eventAddComponent);
   };
 
   #renderEvent = (point) => {

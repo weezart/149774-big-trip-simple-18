@@ -6,6 +6,7 @@ import DestinationsModel from './model/destinations-model.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+const newEventButtonComponent = new NewEventButtonView();
 
 const siteHeaderElement = document.querySelector('.trip-main');
 const siteMainElement = document.querySelector('.trip-events');
@@ -19,7 +20,17 @@ const filterModel = new FilterModel();
 const boardPresenter = new BoardPresenter(siteMainElement, offersModel, destinationsModel, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsModel);
 
-render(new NewEventButtonView(), siteHeaderElement);
+const handleNewEventFormClose = () => {
+  newEventButtonComponent.element.disabled = false;
+};
+
+const handleNewEventButtonClick = () => {
+  boardPresenter.createEvent(handleNewEventFormClose);
+  newEventButtonComponent.element.disabled = true;
+};
+
+render(newEventButtonComponent, siteHeaderElement);
+newEventButtonComponent.setClickHandler(handleNewEventButtonClick);
 
 filterPresenter.init();
 boardPresenter.init();

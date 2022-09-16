@@ -83,11 +83,11 @@ export const DESCRIPTIONS = [
 
 export const BLANK_POINT = {
   basePrice: null,
-  dateFrom: null,
-  dateTo: null,
+  dateFrom: new Date(),
+  dateTo: new Date(),
   destination: null,
   offers:[],
-  type: null,
+  type: 'taxi',
 };
 
 export const PHOTO_URL = 'https://dummyimage.com/248x152';
