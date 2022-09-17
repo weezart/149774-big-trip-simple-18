@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
-import {ucFirst} from '../utils/common.js';
+import {ucFirst, isNumeric} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 import flatpickr from 'flatpickr';
 
@@ -188,7 +188,11 @@ export default class EventEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
+    const isPriceValid = isNumeric(this._state.basePrice) && +this._state.basePrice > 0;
+    const isDateToValid = new Date(this._state.dateTo) >= new Date(this._state.dateFrom);
+    if (isPriceValid && isDateToValid) {
+      this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
+    }
   };
 
   setCloseClickHandler = (callback) => {
@@ -235,8 +239,10 @@ export default class EventEditView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.value) {
       const currentDestination = this.#eventsData.destinations.find((destinationsItem) => destinationsItem.name === evt.target.value);
+      const destinationID = currentDestination ? currentDestination.id : null;
+
       this.updateElement({
-        destination: currentDestination.id,
+        destination: destinationID,
       });
     }
   };
