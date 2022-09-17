@@ -11,6 +11,18 @@ export const FilterType = {
   FUTURE: 'future',
 };
 
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export const OFFER_TYPES = [
   'taxi',
   'bus',
@@ -71,11 +83,11 @@ export const DESCRIPTIONS = [
 
 export const BLANK_POINT = {
   basePrice: null,
-  dateFrom: null,
-  dateTo: null,
+  dateFrom: new Date(),
+  dateTo: new Date(),
   destination: null,
   offers:[],
-  type: null,
+  type: 'taxi',
 };
 
 export const PHOTO_URL = 'https://dummyimage.com/248x152';

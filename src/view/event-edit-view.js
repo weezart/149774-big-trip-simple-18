@@ -1,10 +1,30 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
-import {ucFirst} from '../utils/common.js';
+import {ucFirst, isNumeric} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+
+const createDestinationTemplate = (destination) => {
+  if (destination) {
+    return (`
+      <section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${destination ? destination.description : ''}</p>
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${destination.pictures.map((picture) => `
+              <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+            `).join('\n')}
+          </div>
+        </div>
+      </section>
+    `);
+  } else {
+    return '';
+  }
+};
 
 const createEventEditTemplate = (point, eventsData) => {
   const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
@@ -48,7 +68,7 @@ const createEventEditTemplate = (point, eventsData) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${point.type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${DESTINATIONS.map((DESTINATIONS_ITEM) => `
               <option value="${DESTINATIONS_ITEM}"></option>
@@ -69,7 +89,7 @@ const createEventEditTemplate = (point, eventsData) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice !== null ? point.basePrice : ''}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -101,17 +121,7 @@ const createEventEditTemplate = (point, eventsData) => {
           </div>
         </section>
 
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${destination.pictures.map((picture) => `
-                  <img class="event__photo" src="${picture.src}" alt="${picture.description}">
-                `).join('\n')}
-            </div>
-          </div>
-        </section>
+        ${createDestinationTemplate(destination)}
       </section>
     </form>
   </li>`
@@ -164,15 +174,25 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
+    const isPriceValid = isNumeric(this._state.basePrice) && +this._state.basePrice > 0;
+    const isDateToValid = new Date(this._state.dateTo) >= new Date(this._state.dateFrom);
+    if (isPriceValid && isDateToValid) {
+      this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
+    }
   };
 
   setCloseClickHandler = (callback) => {
@@ -219,20 +239,22 @@ export default class EventEditView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.value) {
       const currentDestination = this.#eventsData.destinations.find((destinationsItem) => destinationsItem.name === evt.target.value);
+      const destinationID = currentDestination ? currentDestination.id : null;
+
       this.updateElement({
-        destination: currentDestination.id,
+        destination: destinationID,
       });
     }
   };
 
   #changeDateFromHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate
     });
   };
 
   #changeDateToHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate
     });
   };
@@ -241,8 +263,8 @@ export default class EventEditView extends AbstractStatefulView {
     this.#dateFromPicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
+        'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateFrom,
         enableTime: true,
         onChange: this.#changeDateFromHandler
       }
@@ -251,8 +273,8 @@ export default class EventEditView extends AbstractStatefulView {
     this.#dateToPicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
+        'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateTo,
         enableTime: true,
         onChange: this.#changeDateToHandler
       }
@@ -268,6 +290,11 @@ export default class EventEditView extends AbstractStatefulView {
     );
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEditView.parseStateToPoint(this._state));
   };
 
   static parsePointToState = (point) => ({...point});

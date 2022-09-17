@@ -1,6 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
+import {UserAction, UpdateType} from '../const.js';
+import {isDatesEqual} from '../utils/event';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -39,6 +41,7 @@ export default class EventPresenter {
     this.#eventComponent.setEditClickHandler(this.#handleEditClick);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setCloseClickHandler(this.#handleCloseClick);
+    this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventComponent, this.#eventListContainer);
@@ -94,9 +97,24 @@ export default class EventPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = (point) => {
-    this.#changeData(point);
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#replaceFormToCard();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
   #handleCloseClick = () => {
