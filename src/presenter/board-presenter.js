@@ -5,6 +5,7 @@ import {render, RenderPosition, remove} from '../framework/render.js';
 import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
+import LoadingView from '../view/loading-view.js';
 import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice, unique} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
@@ -17,6 +18,7 @@ export default class BoardPresenter {
   #filterModel = null;
 
   #eventListComponent = new EventListView();
+  #loadingComponent = new LoadingView();
   #noEventComponent = null;
   #sortComponent = null;
 
@@ -24,6 +26,7 @@ export default class BoardPresenter {
   #eventNewPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor(boardContainer, offersModel, destinationsModel, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -106,6 +109,11 @@ export default class BoardPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -130,6 +138,10 @@ export default class BoardPresenter {
     points.forEach((point) => this.#renderEvent(point));
   };
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #renderNoEvents = () => {
     this.#noEventComponent = new NoEventsView(this.#filterType);
 
@@ -142,6 +154,7 @@ export default class BoardPresenter {
     this.#eventPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noEventComponent) {
       remove(this.#noEventComponent);
@@ -153,6 +166,11 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const points = this.points;
     const pointCount = points.length;
 
