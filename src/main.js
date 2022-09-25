@@ -34,9 +34,9 @@ const handleNewEventButtonClick = () => {
   newEventButtonComponent.element.disabled = true;
 };
 
-render(newEventButtonComponent, siteHeaderElement);
-newEventButtonComponent.setClickHandler(handleNewEventButtonClick);
-
 filterPresenter.init();
 boardPresenter.init();
-pointsModel.init();
+pointsModel.init().finally(() => {
+  render(newEventButtonComponent, siteHeaderElement);
+  newEventButtonComponent.setClickHandler(handleNewEventButtonClick);
+});
