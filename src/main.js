@@ -39,3 +39,4 @@ newEventButtonComponent.setClickHandler(handleNewEventButtonClick);
 
 filterPresenter.init();
 boardPresenter.init();
+pointsModel.init();
