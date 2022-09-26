@@ -30,8 +30,6 @@ export default class BoardPresenter {
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
-    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent.element, this.eventsData, this.#handleViewAction);
-
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -162,6 +160,8 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
+    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent.element, this.eventsData, this.#handleViewAction);
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -177,6 +177,7 @@ export default class BoardPresenter {
 
     this.#renderSort();
     render(this.#eventListComponent, this.#boardContainer);
+
     this.#renderEvents(this.points);
   };
 
