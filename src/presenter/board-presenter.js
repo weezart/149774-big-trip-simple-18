@@ -2,12 +2,13 @@ import SortView from '../view/sort-view.js';
 import EventListView from '../view/event-list-view.js';
 import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice} from '../utils/event.js';
-import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType, TimeLimit} from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -24,6 +25,7 @@ export default class BoardPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(boardContainer, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -73,6 +75,8 @@ export default class BoardPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#eventPresenter.get(update.id).setSaving();
@@ -99,6 +103,8 @@ export default class BoardPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
