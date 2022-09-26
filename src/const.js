@@ -46,4 +46,8 @@ export const BLANK_POINT = {
   type: 'taxi',
 };
 
-export const PHOTO_URL = 'https://dummyimage.com/248x152';
+export const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
