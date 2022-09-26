@@ -33,16 +33,6 @@ export const sortByPrice = (pointA, pointB) => {
   return weight ?? pointB.basePrice - pointA.basePrice;
 };
 
-export const unique = (array) => {
-  const result = [];
-
-  for (const value of array) {
-    if (!result.includes(value)) {
-      result.push(value);
-    }
-  }
-
-  return result;
-};
+export const isNumeric = (num) => !isNaN(num) && num !== null;
 
 export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
