@@ -4,14 +4,12 @@ import {UpdateType} from '../const.js';
 export default class PointsModel extends Observable {
   #pointsApiService = null;
   #points = [];
+  #destinations = [];
+  #offers = [];
 
   constructor(pointsApiService) {
     super();
     this.#pointsApiService = pointsApiService;
-  }
-
-  get points() {
-    return this.#points;
   }
 
   init = async () => {
@@ -22,8 +20,32 @@ export default class PointsModel extends Observable {
       this.#points = [];
     }
 
+    try {
+      this.#destinations = await this.#pointsApiService.destinations;
+    } catch(err) {
+      this.#destinations = [];
+    }
+
+    try {
+      this.#offers = await this.#pointsApiService.offers;
+    } catch(err) {
+      this.#offers = [];
+    }
+
     this._notify(UpdateType.INIT);
   };
+
+  get points() {
+    return this.#points;
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
 
   updatePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);

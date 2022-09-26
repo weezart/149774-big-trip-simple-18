@@ -2,18 +2,15 @@ import SortView from '../view/sort-view.js';
 import EventListView from '../view/event-list-view.js';
 import NoEventsView from '../view/no-events-view';
 import {render, RenderPosition, remove} from '../framework/render.js';
-import {getRandomInteger, getRandomizedReducedArray} from '../utils/common.js';
 import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import {eventFilter} from '../utils/event-filter.js';
-import {sortByDay, sortByPrice, unique} from '../utils/event.js';
+import {sortByDay, sortByPrice} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
-  #offersModel = null;
-  #destinationsModel = null;
   #pointsModel = null;
   #filterModel = null;
 
@@ -28,10 +25,8 @@ export default class BoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
 
-  constructor(boardContainer, offersModel, destinationsModel, pointsModel, filterModel) {
+  constructor(boardContainer, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
-    this.#offersModel = offersModel;
-    this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -56,12 +51,10 @@ export default class BoardPresenter {
 
   get eventsData() {
     const eventsOffers = [...this.#offersModel.offers];
-    const eventsOfferTypes = [...this.#offersModel.offerTypes];
     const eventsDestinations = [...this.#destinationsModel.destinations];
 
     return {
       offers: eventsOffers,
-      offerTypes: eventsOfferTypes,
       destinations: eventsDestinations
     };
   }
@@ -185,10 +178,6 @@ export default class BoardPresenter {
   };
 
   #renderEvent = (point) => {
-    // Костыль, проставляющий правильные случайные id из массива только возможных офферов
-    const offerTypesId = this.eventsData.offerTypes.find((offerType) => offerType.type === point.type);
-    point.offers = unique(getRandomizedReducedArray(offerTypesId.offers, getRandomInteger(0, 3)));
-
     const eventPresenter = new EventPresenter(this.#eventListComponent.element, this.eventsData, this.#handleViewAction, this.#handleModeChange);
     eventPresenter.init(point);
     this.#eventPresenter.set(point.id, eventPresenter);
