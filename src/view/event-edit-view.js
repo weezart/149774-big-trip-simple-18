@@ -161,8 +161,6 @@ export default class EventEditView extends AbstractStatefulView {
     this._state = EventEditView.parsePointToState(point);
     this.#eventsData = eventsData;
 
-    console.log(this._state, this.#eventsData);
-
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
