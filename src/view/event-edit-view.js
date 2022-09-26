@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {OFFER_TYPES, DESTINATIONS, OFFER_INPUTS, BLANK_POINT} from '../const.js';
+import {BLANK_POINT} from '../const.js';
 import {ucFirst, isNumeric} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 import flatpickr from 'flatpickr';
@@ -27,10 +27,9 @@ const createDestinationTemplate = (destination) => {
 };
 
 const createEventEditTemplate = (point, eventsData) => {
-  const offerTypesId = eventsData.offerTypes.find((offerType) => offerType.type === point.type);
   const destination = eventsData.destinations.find((destinationsItem) => destinationsItem.id === point.destination);
-  const offers = eventsData.offers.filter(({id}) => point.offers.some((offerId) => offerId === id));
-  const availableOffers = eventsData.offers.filter(({id}) => offerTypesId.offers.some((offerId) => offerId === id));
+  const offersByType = eventsData.offers.find((offersItem) => offersItem.type === point.type).offers;
+  const offers = offersByType.filter(({id}) => point.offers.some((offerId) => offerId === id));
 
   const offersId = new Set();
 
@@ -53,10 +52,10 @@ const createEventEditTemplate = (point, eventsData) => {
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
-              ${OFFER_TYPES.map((type) => `
+              ${eventsData.offers.map((offer) => `
                 <div class="event__type-item">
-                  <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-                  <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${ucFirst(type)}</label>
+                  <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+                  <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${ucFirst(offer.type)}</label>
                 </div>
               `).join('\n')}
 
@@ -70,8 +69,8 @@ const createEventEditTemplate = (point, eventsData) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${DESTINATIONS.map((DESTINATIONS_ITEM) => `
-              <option value="${DESTINATIONS_ITEM}"></option>
+            ${eventsData.destinations.map((destinationsItem) => `
+              <option value="${destinationsItem.name}"></option>
             `).join('\n')}
           </datalist>
         </div>
@@ -103,12 +102,12 @@ const createEventEditTemplate = (point, eventsData) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${availableOffers.map((availableOffer) => `
+            ${offersByType.map((availableOffer) => `
                 <div class="event__offer-selector">
                   <input
                     class="event__offer-checkbox  visually-hidden"
                     id="event-offer-${availableOffer.id}-1"
-                    type="checkbox" name="event-offer--${OFFER_INPUTS[availableOffer.title]}"
+                    type="checkbox" name="event-offer--${availableOffer.id}"
                     data-offer-id="${availableOffer.id}"
                     ${offersId.has(availableOffer.id) ? 'checked' : ''}>
                   <label class="event__offer-label" for="event-offer-${availableOffer.id}-1">
@@ -231,7 +230,7 @@ export default class EventEditView extends AbstractStatefulView {
   #priceInputHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: +evt.target.value,
     });
   };
 

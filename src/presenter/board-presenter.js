@@ -50,8 +50,8 @@ export default class BoardPresenter {
   }
 
   get eventsData() {
-    const eventsOffers = [...this.#offersModel.offers];
-    const eventsDestinations = [...this.#destinationsModel.destinations];
+    const eventsOffers = [...this.#pointsModel.offers];
+    const eventsDestinations = [...this.#pointsModel.destinations];
 
     return {
       offers: eventsOffers,

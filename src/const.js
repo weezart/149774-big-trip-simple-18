@@ -24,51 +24,6 @@ export const UpdateType = {
   INIT: 'INIT',
 };
 
-export const OFFER_TYPES = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant'
-];
-
-export const OFFERS = [
-  'Add luggage',
-  'Order Uber',
-  'Rent a car',
-  'Switch to comfort',
-  'Add breakfast',
-  'Book tickets',
-  'Lunch in city'
-];
-
-export const OFFER_INPUTS = {
-  'Add luggage': 'luggage',
-  'Order Uber': 'uber',
-  'Rent a car': 'car',
-  'Switch to comfort': 'comfort',
-  'Add breakfast': 'breakfast',
-  'Book tickets': 'tickets',
-  'Lunch in city': 'city'
-};
-
-export const DESTINATIONS = [
-  'Chamonix',
-  'Amsterdam',
-  'Rome',
-  'Madrid',
-  'Geneva',
-  'Paris',
-  'Moscow',
-  'London',
-  'Tokio',
-  'Barcelona'
-];
-
 export const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
