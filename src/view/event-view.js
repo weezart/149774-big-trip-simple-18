@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractView from '../framework/view/abstract-view.js';
 import {
   humanizeDateToTime,
@@ -42,7 +43,7 @@ const createEventTemplate = (point, destination, offers) => (
         </p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${point.basePrice}</span>
+        &euro;&nbsp;<span class="event__price-value">${he.encode(String(point.basePrice))}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">

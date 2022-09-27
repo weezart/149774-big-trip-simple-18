@@ -33,6 +33,4 @@ export const sortByPrice = (pointA, pointB) => {
   return weight ?? pointB.basePrice - pointA.basePrice;
 };
 
-export const isNumeric = (num) => !isNaN(num) && num !== null;
-
 export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');

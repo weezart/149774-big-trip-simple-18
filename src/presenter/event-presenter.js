@@ -152,6 +152,7 @@ export default class EventPresenter {
   };
 
   #handleCloseClick = () => {
+    this.#eventEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 }

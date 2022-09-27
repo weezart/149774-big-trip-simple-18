@@ -169,8 +169,6 @@ export default class EventEditView extends AbstractStatefulView {
     return createEventEditTemplate(this._state, this.#eventsData);
   }
 
-  // Перегружаем метод родителя removeElement,
-  // чтобы при удалении удалялся более не нужный календарь
   removeElement = () => {
     super.removeElement();
 
@@ -206,6 +204,7 @@ export default class EventEditView extends AbstractStatefulView {
     this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCloseClickHandler(this._callback.closeClick);
   };
 
   #formSubmitHandler = (evt) => {
