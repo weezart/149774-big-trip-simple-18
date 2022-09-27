@@ -8,7 +8,7 @@ import PointsApiService from './points-api-service.js';
 const newEventButtonComponent = new NewEventButtonView();
 
 
-const AUTHORIZATION = 'Basic gXS2sg404s4d4gwl1sd2wj';
+const AUTHORIZATION = 'Basic zTS2sg404s4d4gwl1sd2wj';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const siteHeaderElement = document.querySelector('.trip-main');
