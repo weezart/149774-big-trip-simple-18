@@ -2,7 +2,7 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import EventEditView from '../view/event-edit-view.js';
 import {UserAction, UpdateType} from '../const.js';
 
-export default class TaskNewPresenter {
+export default class EventNewPresenter {
   #eventListContainer = null;
   #changeData = null;
   #eventsData = null;

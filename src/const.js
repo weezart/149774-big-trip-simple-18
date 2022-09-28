@@ -38,3 +38,12 @@ export const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export const EDITING_CLOSE_TIMEOUT = 300
+
+export const SHAKE_CLASS_NAME = 'shake';
+export const SHAKE_ANIMATION_TIMEOUT = 600;

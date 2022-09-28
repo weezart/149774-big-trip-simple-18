@@ -1,13 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import EventView from '../view/event-view.js';
 import EventEditView from '../view/event-edit-view.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, Mode, EDITING_CLOSE_TIMEOUT} from '../const.js';
 import {isDatesEqual} from '../utils/event';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 export default class EventPresenter {
   #eventListContainer = null;
@@ -141,6 +136,7 @@ export default class EventPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
+    setTimeout(this.#replaceFormToCard, EDITING_CLOSE_TIMEOUT);
   };
 
   #handleDeleteClick = (point) => {

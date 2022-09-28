@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {BLANK_POINT} from '../const.js';
+import {BLANK_POINT, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME} from '../const.js';
 import {ucFirst, isNumeric} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 import flatpickr from 'flatpickr';
@@ -7,8 +7,8 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createDestinationTemplate = (destination) => {
-  if (destination) {
-    return (`
+  return destination
+    ? `
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${destination ? destination.description : ''}</p>
@@ -20,10 +20,8 @@ const createDestinationTemplate = (destination) => {
           </div>
         </div>
       </section>
-    `);
-  } else {
-    return '';
-  }
+    `
+    : '';
 };
 
 const createEventEditTemplate = (point, eventsData) => {
@@ -199,6 +197,13 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   };
 
+  shakeComponent = () => {
+    this.element.classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.classList.remove(SHAKE_CLASS_NAME);
+    }, SHAKE_ANIMATION_TIMEOUT);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -213,6 +218,9 @@ export default class EventEditView extends AbstractStatefulView {
     const isDateToValid = new Date(this._state.dateTo) >= new Date(this._state.dateFrom);
     if (isPriceValid && isDateToValid) {
       this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
+    } else {
+      this.shakeComponent();
+      this.element.querySelector('.event__input--price').setCustomValidity(!isPriceValid ? 'Длина комментария не должна превышать 140 символов' : '');
     }
   };
 
@@ -239,13 +247,8 @@ export default class EventEditView extends AbstractStatefulView {
     const eventOffers = [...this._state.offers];
     const offerId = Number(evt.target.dataset.offerId);
     const offerIndex = eventOffers.indexOf(offerId);
-    if (offerIndex !== -1) {
-      eventOffers.splice(offerIndex, 1);
-    } else {
-      eventOffers.push(offerId);
-    }
     this._setState({
-      offers: eventOffers,
+      offers: offerIndex !== -1 ? eventOffers.splice(offerIndex, 1) : eventOffers.push(offerId),
     });
   };
 
