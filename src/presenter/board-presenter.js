@@ -6,6 +6,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import LoadingView from '../view/loading-view.js';
+import ErrorView from '../view/error-view.js';
 import {eventFilter} from '../utils/event-filter.js';
 import {sortByDay, sortByPrice} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType, TimeLimit} from '../const.js';
@@ -17,6 +18,7 @@ export default class BoardPresenter {
 
   #eventListComponent = new EventListView();
   #loadingComponent = new LoadingView();
+  #errorComponent = new ErrorView();
   #noEventComponent = null;
   #sortComponent = null;
 
@@ -66,7 +68,12 @@ export default class BoardPresenter {
   createEvent = (callback) => {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#eventNewPresenter.init(callback);
+    if (this.eventsData.offers.length === 0 || this.eventsData.destinations.length === 0) {
+      remove(this.#noEventComponent);
+      this.#renderError();
+    } else {
+      this.#eventNewPresenter.init(callback);
+    }
   };
 
   #handleModeChange = () => {
@@ -153,6 +160,10 @@ export default class BoardPresenter {
     render(this.#loadingComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 
+  #renderError = () => {
+    render(this.#errorComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #renderNoEvents = () => {
     this.#noEventComponent = new NoEventsView(this.#filterType);
 
@@ -165,6 +176,7 @@ export default class BoardPresenter {
     this.#eventPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#errorComponent);
     remove(this.#loadingComponent);
 
     if (this.#noEventComponent) {
