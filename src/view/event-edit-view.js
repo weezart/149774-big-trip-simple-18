@@ -1,31 +1,27 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {BLANK_POINT, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME} from '../const.js';
+import {BLANK_POINT} from '../const.js';
 import {ucFirst, isNumeric} from '../utils/common.js';
 import {humanizeDate} from '../utils/event.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createDestinationTemplate = (destination) => {
-  return destination
-    ? `
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${destination ? destination.description : ''}</p>
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${destination.pictures.map((picture) => `
-              <img class="event__photo" src="${picture.src}" alt="${picture.description}">
-            `).join('\n')}
-          </div>
+const createDestinationTemplate = (destination) => destination ? `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination ? destination.description : ''}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${destination.pictures.map((picture) => `
+            <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+          `).join('\n')}
         </div>
-      </section>
+      </div>
+    </section>
     `
-    : '';
-};
+  : '';
 
 const createEventEditTemplate = (point, eventsData) => {
-
   const destination = eventsData.destinations.find((destinationsItem) => destinationsItem.id === point.destination);
   const offersByType = eventsData.offers.find((offersItem) => offersItem.type === point.type).offers;
   const offers = offersByType.filter(({id}) => point.offers.some((offerId) => offerId === id));
@@ -197,12 +193,10 @@ export default class EventEditView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   };
 
-  shakeComponent = () => {
-    this.element.classList.add(SHAKE_CLASS_NAME);
-    setTimeout(() => {
-      this.element.classList.remove(SHAKE_CLASS_NAME);
-    }, SHAKE_ANIMATION_TIMEOUT);
-  };
+  validatePrice = (price) => isNumeric(price) && +price > 0;
+  validateDestination = (destination) => destination
+    ? Boolean(this.#eventsData.destinations.find((destinationsItem) => destinationsItem.name === destination))
+    : false;
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
@@ -214,13 +208,9 @@ export default class EventEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const isPriceValid = isNumeric(this._state.basePrice) && +this._state.basePrice > 0;
-    const isDateToValid = new Date(this._state.dateTo) >= new Date(this._state.dateFrom);
-    if (isPriceValid && isDateToValid) {
+    const destinationValue = this.element.querySelector('.event__input--destination').value;
+    if (this.validatePrice(this._state.basePrice) && this.validateDestination(destinationValue)) {
       this._callback.formSubmit(EventEditView.parseStateToPoint(this._state));
-    } else {
-      this.shakeComponent();
-      this.element.querySelector('.event__input--price').setCustomValidity(!isPriceValid ? 'Длина комментария не должна превышать 140 символов' : '');
     }
   };
 
@@ -254,6 +244,7 @@ export default class EventEditView extends AbstractStatefulView {
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
+    evt.target.setCustomValidity(!this.validatePrice(evt.target.value) ? 'Должно быть введено целое положительное число.' : '');
     this._setState({
       basePrice: +evt.target.value,
     });
@@ -263,22 +254,25 @@ export default class EventEditView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.value) {
       const currentDestination = this.#eventsData.destinations.find((destinationsItem) => destinationsItem.name === evt.target.value);
-      const destinationID = currentDestination ? currentDestination.id : null;
-
-      this.updateElement({
-        destination: destinationID,
-      });
+      evt.target.setCustomValidity(!currentDestination ? 'Выбирается из списка предложенных значений.' : '');
+      if (currentDestination) {
+        this.updateElement({
+          destination: currentDestination.id,
+        });
+      }
+    } else {
+      evt.target.setCustomValidity('Не выбран пункт назначения.');
     }
   };
 
   #changeDateFromHandler = ([userDate]) => {
-    this._setState({
+    this.updateElement({
       dateFrom: userDate
     });
   };
 
   #changeDateToHandler = ([userDate]) => {
-    this._setState({
+    this.updateElement({
       dateTo: userDate
     });
   };
@@ -289,6 +283,7 @@ export default class EventEditView extends AbstractStatefulView {
       {
         'time_24hr': true,
         dateFormat: 'd/m/y H:i',
+        maxDate: this._state.dateTo,
         enableTime: true,
         onChange: this.#changeDateFromHandler
       }
@@ -299,6 +294,7 @@ export default class EventEditView extends AbstractStatefulView {
       {
         'time_24hr': true,
         dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateFrom,
         enableTime: true,
         onChange: this.#changeDateToHandler
       }

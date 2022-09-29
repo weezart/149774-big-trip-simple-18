@@ -65,7 +65,6 @@ export default class PointsApiService extends ApiService {
       'date_to': point.dateTo,
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedPoint.basePrice;
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;

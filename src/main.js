@@ -5,11 +5,8 @@ import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsApiService from './points-api-service.js';
+import {END_POINT, AUTHORIZATION} from './const.js';
 const newEventButtonComponent = new NewEventButtonView();
-
-
-const AUTHORIZATION = 'Basic zTS2sg404s4d4gwl1sd2wj';
-const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const siteHeaderElement = document.querySelector('.trip-main');
 const siteMainElement = document.querySelector('.trip-events');

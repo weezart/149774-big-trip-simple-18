@@ -110,7 +110,6 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка
         this.#eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:

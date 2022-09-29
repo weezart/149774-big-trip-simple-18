@@ -43,7 +43,7 @@ export const Mode = {
   EDITING: 'EDITING',
 };
 
-export const EDITING_CLOSE_TIMEOUT = 300
+export const EDITING_CLOSE_TIMEOUT = 300;
 
-export const SHAKE_CLASS_NAME = 'shake';
-export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const AUTHORIZATION = 'Basic zTS2sg404s4d4gwl1sd2wj';
+export const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
