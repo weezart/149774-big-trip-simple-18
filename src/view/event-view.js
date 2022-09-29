@@ -7,25 +7,17 @@ import {
   humanizeDateToDayMonth
 } from '../utils/event.js';
 
-const createOffers = (offers) => {
-  if (offers.length === 0) {
-    return (
-      `<li class="event__offer">
-        <span class="event__offer-title">No additional offers</span>
-      </li>`
-    );
-  } else {
-    return (
-      offers.map((offer) => `
-       <li class="event__offer">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </li>
-    `).join('\n')
-    );
-  }
-};
+const createOffers = (offers) => offers.length === 0 ?
+  `<li class="event__offer">
+    <span class="event__offer-title">No additional offers</span>
+  </li>`
+  : offers.map((offer) => `
+     <li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>
+  `).join('\n');
 
 const createEventTemplate = (point, destination, offers) => (
   `<li class="trip-events__item">
